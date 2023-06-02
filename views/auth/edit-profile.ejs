@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Page</title>
+  </head>
+  <body>
+    <h1>
+      <h1>Update Profile</h1>
+      <form
+        method="post"
+        action="/update-profile"
+        enctype="multipart/form-data"
+      >
+        <div>
+          <label for="email">Email</label>
+          <br />
+          <input
+            type="email"
+            name="email"
+            placeholder="Your email"
+            value="<%= email %>"
+          />
+          <br />
+        </div>
+        <br />
+        <div>
+          <label for="password">Password</label>
+          <br />
+          <input type="password" name="password" placeholder="Your Password" />
+          <br />
+          <% if(errors.password){ %>
+          <span style="color: red"><%= errors.password %></span>
+          <% } %>
+        </div>
+        <br />
+        <div>
+          <label for="password">Avatar</label>
+          <br />
+          <!-- <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSshrGc3H1tmJPwlIDts0DaK67hMU45v6NH6y_5txdY&s"
+            width="200px"
+            height="200px"
+          /> -->
+          <br />
+          <input type="file" name="media" placeholder="Your Password" />
+          <br />
+          <% if(errors.avatar){ %>
+          <span style="color: red"><%= errors.avatar %></span>
+          <% } %>
+        </div>
+        <br />
+        <div>
+          <input type="submit" />
+        </div>
+      </form>
+    </h1>
+  </body>
+</html>

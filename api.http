@@ -1,0 +1,137 @@
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "name":"sabrina",
+    "email":"sabrina@mail.com",
+    "password":"password123"
+}
+
+### 
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email":"sabrina@mail.com",
+    "password":"password123"
+}
+
+###
+GET http://localhost:3000/whoami
+Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6InNhYnJpbmFAbWFpbC5jb20iLCJpYXQiOjE2ODI2OTI2MDh9.VneW1WUp6Cupqe2H4zdYwwc18Ows-8OXnjd1nd1vTCY
+
+##############################################################
+### get supplier
+GET http://127.0.0.1:8080/suppliers HTTP/1.1
+
+### post supplier
+POST http://127.0.0.1:8080/suppliers HTTP/1.1
+content-type: application/json
+
+{
+    "name": "PT.Baru",
+    "address": "Surabaya"
+}
+
+### edit supplier
+PUT http://127.0.0.1:8080/suppliers/12 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "PT. Layar Pertama",
+    "address": "Tuban"
+}
+
+### delete supplier
+DELETE http://127.0.0.1:8080/suppliers/12 HTTP/1.1
+
+##############################################################
+
+#component
+### get components
+GET http://127.0.0.1:8080/components HTTP/1.1
+
+### post components
+POST http://127.0.0.1:8080/components/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Layar IPS 1",
+    "description": "Ini layar IPS",
+    "supplier_id" : [1, 11]
+}
+
+### edit components
+PUT http://127.0.0.1:8080/components/1 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "PT. Layar Bagus Edit",
+    "address": "Tuban",
+    "supplier_id": [1,11] 
+}
+
+### delete component
+DELETE http://127.0.0.1:8080/components/20 HTTP/1.1
+
+##############################################################
+
+#product
+### get product
+GET http://127.0.0.1:8080/products HTTP/1.1
+
+### post product
+POST http://127.0.0.1:8080/products HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Redmi 7 plus",
+    "quantity": 10,
+    "component_id" : [1,99] 
+}
+
+### edit product
+PUT http://127.0.0.1:8080/products/4 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Redmi 4 plus",
+    "quantity": 5,
+    "component_id" : [2,99] 
+}
+
+### delete product
+DELETE http://127.0.0.1:8080/products/7 HTTP/1.1
+
+###############################################################
+#relation
+### add component products
+POST http://127.0.0.1:8080/add-product-component HTTP/1.1
+content-type: application/json
+
+{
+    "product_id" : 5,
+    "component_id" : 11
+}
+
+### delete component products
+DELETE http://127.0.0.1:8080/delete-product-component/11/5 HTTP/1.1
+content-type: application/json
+
+{
+    "product_id" : 5,
+    "component_id" : 13
+}
+
+### add component supplier
+POST http://127.0.0.1:8080/add-supplier-component HTTP/1.1
+content-type: application/json
+
+{
+    "supplier_id" : 13,
+    "component_id" : 36
+}
+
+### delete component supplier
+DELETE  http://127.0.0.1:3000/delete-supplier-component/5/ HTTP/1.1
+content-type: application/json

@@ -1,0 +1,3 @@
+SENTRY_DSN=https://7bea02a6f57b42acaec62c973a8ff58e@o4505210796179456.ingest.sentry.io/4505211388362752
+railway_production = product-component-challenge-production.up.railway.app
+railway_develop = product-component-challenge-develop.up.railway.app

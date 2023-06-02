@@ -1,0 +1,1328 @@
+openapi: 3.0.0
+info:
+  title: Pencatatan Supplier Product Component
+  description: |-
+    Aplikasi yang digunakan untuk melakukan pencatatan supplier dari sebuah komponen dan komponen yang digunakan pada suatu produk.
+  contact:
+    email: daffaammar09@gmail.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Test local computer
+  - url: https://test.app-supplier.com
+    description: Staging
+  - url: https://app-supplier.com
+    description: Production
+tags:
+  - name: Components
+    description: Components data
+  - name: Suppliers
+    description: Suppliers data
+  - name: Products
+    description: Products data
+paths:
+  /components:
+    post:
+      tags:
+        - Components
+      summary: Menambah data komponen
+      description: Menambahkan Komponen baru
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Baterai 5000 mAh
+                description:
+                  type: string
+                  example: Baterai berkapasitas 5000 mAh
+                supplier_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 11]
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Baterai 5000 mAh
+                      description:
+                        type: string
+                        example: Baterai berkapasitas 5000 mAh
+        "400":
+          description: Name is null
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: name must be provided
+                  data:
+                    type: object
+        "404":
+          description: Supplier_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: One or more supplier IDs not found
+                  data:
+                    type: object
+    get:
+      tags:
+        - Components
+      summary: Mendapatkan info semua components
+      description: Mendapatkan info semua components
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Baterai 5000 mAh
+                        description:
+                          type: string
+                          example: Baterai berkapasitas 5000 mAh
+  /components/{id}:
+    get:
+      tags:
+        - Components
+      summary: Mendapatkan info spesific satu components
+      description: Mendapatkan info spesific satu components
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of component
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Baterai 5000 mAh
+                      description:
+                        type: string
+                        example: Baterai berkapasitas 5000 mAh
+                      Suppliers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: Baterai 5000 mAh
+                            address:
+                              type: string
+                              example: Jl.Malang
+                      Products:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: Redmi 5 plus
+                            quantity:
+                              type: integer
+                              example: 5
+        "404":
+          description: Component_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: can't find component with id 1
+                  data:
+                    type: object
+    put:
+      tags:
+        - Components
+      summary: Update components data
+      description: Update components data
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of components
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Baterai 5000 mAh
+                description:
+                  type: string
+                  example: Baterai berkapasitas 5000 mAh
+                supplier_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 11]
+      responses:
+        "201":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+        "404":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: component_id not found
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: One or more supplier IDs not found
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: If component_id is not exist
+                  value:
+                    status: false
+                    message: can't find component with id 1
+                    data: {}
+                component_id-null:
+                  summary: If supplier_id is not exist
+                  value:
+                    status: false
+                    message: One or more supplier IDs not found
+                    data: {}
+    delete:
+      tags:
+        - Components
+      description: Delete component data
+      summary: Delete component data
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "201":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+        "404":
+          description: component_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: can't find component with id
+                  data:
+                    type: object
+  /add-supplier-component:
+    post:
+      tags:
+        - Components
+      summary: Menambah data komponen dari supplier
+      description: Menambahkan komponen supplier
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                supplier_id:
+                  type: integer
+                  example: 1
+                component_id:
+                  type: integer
+                  example: 10
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      supplier_id:
+                        type: integer
+                        example: 1
+                      component_id:
+                        type: integer
+                        example: 10
+        "401":
+          description: Error data exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: data already exist
+                  data:
+                    type: object
+        "404":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: supplier_id cannot be null
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: component_id cannot be null
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: If supplier_id null
+                  value:
+                    status: false
+                    message: supplier_id cannot be null
+                    data: {}
+                component_id-null:
+                  summary: If component_id null
+                  value:
+                    status: false
+                    message: component_id cannot be null
+                    data: {}
+  /delete-supplier-component/{component_id}/{supplier_id}:
+    delete:
+      tags:
+        - Components
+      summary: Menghapus data komponen dari supplier
+      description: Menghapus komponen supplier
+      parameters:
+        - in: path
+          name: component_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of component
+        - in: path
+          name: supplier_id
+          required: true
+          schema:
+            type: integer
+            example: 11
+          description: id of supplier
+      responses:
+        "200":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+        "404":
+          description: Error data not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: data not exist
+                  data:
+                    type: object
+        "401":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: supplier_id cannot be null
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: component_id cannot be null
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: If supplier_id null
+                  value:
+                    status: false
+                    message: supplier_id cannot be null
+                    data: {}
+                component_id-null:
+                  summary: If component_id null
+                  value:
+                    status: false
+                    message: component_id cannot be null
+                    data: {}
+  /suppliers:
+    post:
+      tags:
+        - Suppliers
+      summary: Menambah data supplier
+      description: Menambahkan supplier baru
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: PT. Maju Jaya
+                address:
+                  type: string
+                  example: Jl. Apel, Malang
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: PT. Maju Jaya
+                      address:
+                        type: string
+                        example: Jl. Apel, Malang
+    get:
+      tags:
+        - Suppliers
+      summary: Mendapatkan info semua components
+      description: Mendapatkan info semua components
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: PT. Maju Jaya
+                        address:
+                          type: string
+                          example: Jl. Apel, Malang
+  /suppliers/{id}:
+    get:
+      tags:
+        - Suppliers
+      summary: Mendapatkan info spesific satu supplier
+      description: Mendapatkan info spesific satu supplier
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of supplier
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: PT. Maju Jaya
+                      address:
+                        type: string
+                        example: Jl. Apel, Malang
+                      Components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: Baterai 5000 mAh
+                            description:
+                              type: string
+                              example: Baterai 5000mAh
+        "404":
+          description: supplier_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: can't find supplier with id 1
+                  data:
+                    type: object
+    put:
+      tags:
+        - Suppliers
+      summary: Update supplier data
+      description: Update supplier data
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of supplier
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: PT. Maju Jaya
+                address:
+                  type: string
+                  example: Jl. Apel, Malang
+      responses:
+        "201":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+        "404":
+          description: supplier_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: can't find supplier with id 1
+                  data:
+                    type: object
+    delete:
+      tags:
+        - Suppliers
+      description: Delete supplier data
+      summary: Delete supplier data
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of supplier
+      responses:
+        "201":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+        "404":
+          description: supplier_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: can't find supplier with id 1
+                  data:
+                    type: object
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Menambah data product
+      description: Menambahkan product baru
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Redmi 5 Plus
+                quantity:
+                  type: integer
+                  example: 5
+                component_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 11]
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Redmi 5 Plus
+                      quantity:
+                        type: integer
+                        example: 5
+        "401":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: name must be provided
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: component_id cannot be null
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: If name null
+                  value:
+                    status: false
+                    message: name must be provided
+                    data: {}
+                component_id-null:
+                  summary: If component_id null
+                  value:
+                    status: false
+                    message: component_id cannot be null
+                    data: {}
+        "404":
+          description: component_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: One or more component IDs not found
+                  data:
+                    type: object
+    get:
+      tags:
+        - Products
+      summary: Mendapatkan info semua components
+      description: Mendapatkan info semua components
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Redmi 5 Plus
+                        quantity:
+                          type: integer
+                          example: 5
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Mendapatkan info spesific satu product
+      description: Mendapatkan info spesific satu product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of product
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Redmi 5 Plus
+                      quantity:
+                        type: integer
+                        example: 5
+                      Components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: Baterai 5000 mAh
+                            description:
+                              type: string
+                              example: Baterai berkapasitas 5000 mAh
+        "404":
+          description: Component_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: can't find product with id 1
+                  data:
+                    type: object
+    put:
+      tags:
+        - Products
+      summary: Update product data
+      description: Update product data
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Redmi 5 plus
+                quantity:
+                  type: string
+                  example: 5
+                component_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 11]
+      responses:
+        "200":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+        "400":
+          description: component_id cannot be null
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: component_id cannot be null
+                  data:
+                    type: object
+        "404":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: component_id not found
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: product_id cannot be null
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: If component_id is not exist
+                  value:
+                    status: false
+                    message: One or more component IDs not found
+                    data: {}
+                component_id-null:
+                  summary: If product_id is not exist
+                  value:
+                    status: false
+                    message: cannot find product with id 1
+                    data: {}
+    delete:
+      tags:
+        - Products
+      description: Delete product data
+      summary: Delete product data
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of product
+      responses:
+        "200":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+        "404":
+          description: product_id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: can't find product with id 1
+                  data:
+                    type: object
+  /add-product-component:
+    post:
+      tags:
+        - Products
+      summary: Menambah data product dan komponen
+      description: Menambahkan product komponen
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  example: 1
+                component_id:
+                  type: integer
+                  example: 10
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                        example: 1
+                      component_id:
+                        type: integer
+                        example: 10
+        "401":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: supplier_id cannot be null
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: component_id cannot be null
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: data already exist
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: If product_id null
+                  value:
+                    status: false
+                    message: product_id cannot be null
+                    data: {}
+                component_id-null:
+                  summary: If component_id null
+                  value:
+                    status: false
+                    message: component_id cannot be null
+                    data: {}
+                data-exist:
+                  summary: If data is exist
+                  value:
+                    status: false
+                    message: data already exist
+                    data: {}
+        "404":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Cannot find product_id
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Cannot find component_id
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: Cannot find product_id
+                  value:
+                    status: false
+                    message: can't find product with id 1
+                    data: {}
+                component_id-null:
+                  summary: Cannot find component_id
+                  value:
+                    status: false
+                    message: can't find component with id 1
+                    data: {}
+  /delete-product-component/{component_id}/{product_id}:
+    delete:
+      tags:
+        - Products
+      summary: Menghapus data komponen dari supplier
+      description: Menghapus komponen supplier
+      parameters:
+        - in: path
+          name: component_id
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - in: path
+          name: product_id
+          required: true
+          schema:
+            type: integer
+            example: 11
+      responses:
+        "200":
+          description: Success Validated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+        "401":
+          description: Error from user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: supplier_id cannot be null
+                      data:
+                        type: object
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: component_id cannot be null
+                      data:
+                        type: object
+              examples:
+                supplier_id-null:
+                  summary: If product_id null
+                  value:
+                    status: false
+                    message: product_id cannot be null
+                    data: {}
+                component_id-null:
+                  summary: If component_id null
+                  value:
+                    status: false
+                    message: component_id cannot be null
+                    data: {}
+        "404":
+          description: data not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: data not exist
+                  data:
+                    type: object
