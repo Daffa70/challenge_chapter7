@@ -4,6 +4,10 @@ const passport = require("../utils/passport");
 const imagekit = require("../utils/imagekit");
 const multer = require("multer");
 const upload = multer().single("media");
+const oauth2 = require("../utils/oauth2");
+const nodemailer = require("../utils/nodemailer");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET_KEY } = process.env;
 
 module.exports = {
   registerPage: (req, res) => {
@@ -39,12 +43,26 @@ module.exports = {
 
       const hashPassword = await bcryp.hash(password, 10);
 
-      await User.create({
+      const user = await User.create({
         name,
         email,
         password: hashPassword,
         role_id: 2,
       });
+
+      const payload = {
+        id: user.id,
+      };
+      const token = await jwt.sign(payload, JWT_SECRET_KEY);
+      const url = `${req.protocol}://${req.get(
+        "host"
+      )}/emailverify?token=${token}`;
+
+      const html = await nodemailer.getHtml("emailverify.ejs", {
+        name: user.name,
+        url,
+      });
+      nodemailer.sendMail(user.email, "Verify Your Email", html);
 
       return res.redirect("/login");
     } catch (error) {
@@ -83,47 +101,98 @@ module.exports = {
 
   update: async (req, res) => {
     try {
-      const { name, password } = req.body;
+      const { name } = req.body;
       const user = req.user;
 
-      const passwordCorrect = await bcryp.compare(password, user.password);
-      if (!passwordCorrect) {
-        return res.status(400).json({
-          status: false,
-          message: "credential is not valid!",
-          data: null,
-        });
-      }
-
+      const stringFile = req.file.buffer.toString("base64");
       const uploadFile = await imagekit.upload({
         fileName: req.file.originalname,
         file: stringFile,
       });
-      const stringFile = req.file.buffer.toString("base64");
 
       User.update(
         { name: name, avatar: uploadFile.url },
         { where: { id: user.id } }
       );
 
-      const payload = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-      };
-
-      const token = await jwt.sign(payload, JWT_SECRET_KEY);
-      res.set("Authorization", `Bearer ${token}`);
       return res.status(200).json({
         status: true,
         message: "upload image success!",
         data: {
-          id: user1.id,
-          name: user1.name,
-          email: user1.email,
-          avatar: user1.avatar,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          avatar: user.avatar,
         },
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
+  googleOauth2: async (req, res) => {
+    const { code } = req.query;
+    if (!code) {
+      const googleLoginUrl = oauth2.generateAuthUrl();
+      return res.redirect(googleLoginUrl);
+    }
+
+    await oauth2.setCreadentials(code);
+    const { data } = await oauth2.getUserData();
+
+    try {
+      let user = await User.findOne({ where: { email: data.email } });
+      if (!user) {
+        user = await User.create({
+          name: data.name,
+          email: data.email,
+          user_type: "google",
+          avatar: data.picture,
+        });
+
+        const payload = {
+          id: user.id,
+        };
+        const token = await jwt.sign(payload, JWT_SECRET_KEY);
+        const url = `${req.protocol}://${req.get(
+          "host"
+        )}/emailverify?token=${token}`;
+
+        const html = await nodemailer.getHtml("emailverify.ejs", {
+          name: user.name,
+          url,
+        });
+        nodemailer.sendMail(user.email, "Verify Your Email", html);
+      }
+
+      req.login(user, (err) => {
+        if (err) {
+          return res.redirect("/login");
+        }
+        return res.redirect("/");
+      });
+    } catch (err) {
+      return res.redirect("/login");
+    }
+  },
+
+  verifyEmail: async (req, res) => {
+    try {
+      const { token } = req.query;
+      if (!token) {
+        return res.render("auth/verify-email", {
+          message: "invalid token!",
+          token,
+        });
+      }
+
+      const data = await jwt.verify(token, JWT_SECRET_KEY);
+
+      const updated = await User.update(
+        { email_verify_at: Date.now() },
+        { where: { id: data.id } }
+      );
+      return res.render("auth/verify-email", {
+        message: null,
       });
     } catch (err) {
       throw err;

@@ -21,6 +21,8 @@ router.get("/home", (req, res) => {
 //
 router.get("/register", user.registerPage);
 router.get("/login", user.loginPage);
+router.get("/emailverify", user.verifyEmail);
+router.get("/auth/oauth", user.googleOauth2);
 router.get("/edit-profile", middlewares.auth, user.editPage);
 router.post(
   "/update-profile",
